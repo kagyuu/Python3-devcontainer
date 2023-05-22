@@ -33,3 +33,10 @@ RUN groupadd -g 1000 ${GROUPNAME} && \
     echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} && \
     chmod 0440 /etc/sudoers.d/${USERNAME} && \
     localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
+
+# install poerty for vscode user
+RUN apt-get install bash-completion
+USER vscode
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python3.11 -
+RUN echo "export PATH=/home/vscode/.local/bin:$PATH" >> /home/vscode/.bashrc
+RUN /home/vscode/.local/bin/poetry completions bash | sudo tee /etc/bash_completion.d/poerty.bash-completion > /dev/null

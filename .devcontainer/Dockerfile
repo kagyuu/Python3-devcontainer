@@ -14,16 +14,18 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get update
 
+ARG PYTHON_VERSION
+ARG PYTHON_REVISION
 RUN apt-get install -y intel-mkl postgresql-client mysql-client
-RUN wget https://www.python.org/ftp/python/3.11.3/Python-3.11.3.tgz && \
-    tar -xf Python-3.11.3.tgz && \
-    cd Python-3.11.3 && \
+RUN wget https://www.python.org/ftp/python/${PYTHON_VERSION}.${PYTHON_REVISION}/Python-${PYTHON_VERSION}.${PYTHON_REVISION}.tgz && \
+    tar -xf Python-${PYTHON_VERSION}.${PYTHON_REVISION}.tgz && \
+    cd Python-${PYTHON_VERSION}.${PYTHON_REVISION} && \
     ./configure --enable-optimizations && \
     make -j $(nproc) | tee build.log && \
     sudo make altinstall
 
-RUN /usr/local/bin/pip3.11 install --upgrade pip && \
-    /usr/local/bin/pip3.11 install autopep8 black yapf bandit flake8 mypy pycodestyle pydocstyle pylint
+RUN /usr/local/bin/pip${PYTHON_VERSION} install --upgrade pip && \
+    /usr/local/bin/pip${PYTHON_VERSION} install autopep8 black yapf bandit flake8 mypy pycodestyle pydocstyle pylint
 
 ARG USERNAME=vscode
 ARG GROUPNAME=vscode
@@ -38,6 +40,8 @@ RUN groupadd -g 1000 ${GROUPNAME} && \
 
 # install poerty for vscode user
 USER vscode
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python3.11 -
+ARG WORKDIR
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python${PYTHON_VERSION} -
 RUN echo "export PATH=/home/vscode/.local/bin:$PATH" >> /home/vscode/.bashrc
 RUN /home/vscode/.local/bin/poetry completions bash | sudo tee /etc/bash_completion.d/poerty.bash-completion > /dev/null
+RUN /home/vscode/.local/bin/poetry config cache-dir /workspaces/${WORKDIR}/.cache

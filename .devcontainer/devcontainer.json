@@ -4,6 +4,9 @@
 		"dockerfile": "Dockerfile",
 		"context": "..",
 		"args": {
+			"WORKDIR" : "Python3-devcontainer",
+			"PYTHON_VERSION" : "3.11",
+			"PYTHON_REVISION" : "3"
 		}
 	},
 

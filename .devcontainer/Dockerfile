@@ -3,20 +3,18 @@ FROM ubuntu:latest
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Tokyo
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
+# update the ubuntu os image and install mandatory libs.
+RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y build-essential libbz2-dev libdb-dev \
-      libreadline-dev libffi-dev libgdbm-dev liblzma-dev \
-      libncursesw5-dev libsqlite3-dev libssl-dev \
-      zlib1g-dev uuid-dev tk-dev \
-      sudo git vim wget sudo locales apt-utils curl lsb-release iputils-ping iproute2 bash-completion && \
+        libreadline-dev libffi-dev libgdbm-dev liblzma-dev \
+        libncursesw5-dev libsqlite3-dev libssl-dev \
+        zlib1g-dev uuid-dev tk-dev \
+        sudo wget curl apt-utils locales lsb-release bash-completion && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get update
+    rm -rf /var/lib/apt/lists/*
 
 ARG PYTHON_VERSION
 ARG PYTHON_REVISION
-RUN apt-get install -y intel-mkl postgresql-client mysql-client
 RUN wget https://www.python.org/ftp/python/${PYTHON_VERSION}.${PYTHON_REVISION}/Python-${PYTHON_VERSION}.${PYTHON_REVISION}.tgz && \
     tar -xf Python-${PYTHON_VERSION}.${PYTHON_REVISION}.tgz && \
     cd Python-${PYTHON_VERSION}.${PYTHON_REVISION} && \
@@ -27,6 +25,20 @@ RUN wget https://www.python.org/ftp/python/${PYTHON_VERSION}.${PYTHON_REVISION}/
 RUN /usr/local/bin/pip${PYTHON_VERSION} install --upgrade pip && \
     /usr/local/bin/pip${PYTHON_VERSION} install autopep8 black yapf bandit flake8 mypy pycodestyle pydocstyle pylint
 
+# Options
+RUN apt-get update && \
+    apt-get install -y \
+        git vim tree htop iputils-ping iproute2 \
+        intel-mkl \
+        postgresql-client && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# for the numpy/scipy running on the intel processors.
+RUN update-alternatives --set libblas.so.3-x86_64-linux-gnu /usr/lib/x86_64-linux-gnu/libmkl_rt.so && \
+    update-alternatives --set libblas.so-x86_64-linux-gnu /usr/lib/x86_64-linux-gnu/libmkl_rt.so
+
+# create vscode user
 ARG USERNAME=vscode
 ARG GROUPNAME=vscode
 ARG USER_UID=1000

@@ -40,7 +40,11 @@
 		}
 	},
 
-	"runArgs" : ["--add-host=host.docker.internal:host-gateway"],
+	"runArgs" : [
+		"--runtime=nvidia",
+		"--gpus","all",
+		"--add-host=host.docker.internal:host-gateway"
+	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// 8888 : jupyter notebook

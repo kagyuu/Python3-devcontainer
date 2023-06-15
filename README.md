@@ -29,16 +29,16 @@
 - add packages
     ```
     $ poerty add numpy
-    $ poetry add jupyter
+    $ poetry add jupyterlab
     ```
     The numpy and jupyter is installed to /workspaces/Python3-devcontainer/.cache/virtualenvs/pyexam-xd-L-yZD-py3.11/  that directory belongs host. The default settings of the poetry is /home/vscode/.local/.cache. That is on the docker contaier, therefore the directory will be cleared when the container stop.
-- run jupyter notebook
+- run jupyter lab
     ```
-    $ poetry run jupyter notebook
+    $ poetry run jupyter lab
     ```
-    The jupyter notebook will start and wait on the url "
+    The jupyter lab will start and wait on the url "
     http://localhost:8888/?token=bc90012644866b11db7d9f309e41cb1010a18ef89ba7f6b1"
-- termiate jupyter notebook
+- termiate jupyter lab
     ```
     Ctrl + C
     ```
